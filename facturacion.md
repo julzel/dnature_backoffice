@@ -2,15 +2,6 @@
 
 ## Ejercicio de Diseño de Producto y Software
 
-### Guía del Tutor para Pasante de Ingeniería
-
-Este ejercicio tiene como objetivo enseñarte a **pensar como ingeniera
-de software**, no solamente a escribir código.
-
-Hoy en día, herramientas de inteligencia artificial pueden escribir gran
-parte de la implementación técnica. Sin embargo, **lo que determina si
-un sistema funciona bien o no es la calidad del diseño del producto y
-del software antes de empezar a programar**.
 
 Este ejercicio consiste en convertir una idea vaga en un **PRD
 (Product Requirements Document)** claro y estructurado, de manera que
