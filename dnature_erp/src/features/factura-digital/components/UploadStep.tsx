@@ -1,90 +1,53 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography, Card, CardMedia, Alert } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Alert, Box, Button, Stack, Typography } from '@mui/material'
+import { useFileUpload } from '../hooks/useFileUpload'
+import FilePreview from './FilePreview'
+import FileUploadArea from './FileUploadArea'
 
-const UploadStep: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+interface UploadStepProps {
+  initialFile?: File | null
+  onFileReady: (file: File | null) => void
+}
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] || null;
-    if (selectedFile) {
-      if (!['image/jpeg', 'image/png', 'application/pdf'].includes(selectedFile.type)) {
-        setError('Formato no permitido. Use JPG, PNG o PDF.');
-        return;
-      }
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setError('El archivo excede el tamaño máximo permitido (10 MB).');
-        return;
-      }
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-      setError(null);
+export default function UploadStep({ initialFile = null, onFileReady }: UploadStepProps) {
+  const { error, file, handleDrop, handleRemove, preview } = useFileUpload(initialFile)
+
+  const handleFileDrop = (nextFile: File | null) => {
+    handleDrop(nextFile)
+    if (nextFile) {
+      onFileReady(nextFile)
     }
-  };
+  }
 
-  const handleRemoveFile = () => {
-    setFile(null);
-    setPreview(null);
-    setError(null);
-  };
+  const handleDelete = () => {
+    handleRemove()
+    onFileReady(null)
+  }
 
   return (
-    <Box sx={{ p: 3, border: '1px dashed gray', borderRadius: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Cargar Factura
-      </Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      {!file ? (
-        <Box>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<CloudUploadIcon />}
-            sx={{ mr: 2 }}
-          >
-            Subir archivo
-            <input
-              type="file"
-              hidden
-              onChange={handleFileChange}
-              accept="image/jpeg,image/png,application/pdf"
-            />
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<CameraAltIcon />}
-            disabled
-          >
-            Tomar foto
-          </Button>
-        </Box>
-      ) : (
-        <Card sx={{ mt: 2 }}>
-          {preview && <CardMedia component="img" image={preview} alt="Vista previa" />}
-          <Button
-            variant="text"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={handleRemoveFile}
-          >
-            Eliminar archivo
-          </Button>
-        </Card>
-      )}
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
-        disabled={!file}
-      >
-        Continuar
-      </Button>
-    </Box>
-  );
-};
+    <Stack spacing={3}>
+      <Box>
+        <Typography sx={{ fontWeight: 700 }} variant="h5">
+          Paso 1: Cargar Factura
+        </Typography>
+        <Typography color="text.secondary" variant="body2">
+          Carga una imagen o PDF de la factura para iniciar el proceso.
+        </Typography>
+      </Box>
 
-export default UploadStep;
+      <FileUploadArea error={error} onFileSelected={handleFileDrop} />
+
+      {file ? (
+        <Stack spacing={2}>
+          <FilePreview file={file} onRemove={handleDelete} preview={preview} />
+          <Alert severity="success">Archivo listo para continuar al siguiente paso.</Alert>
+        </Stack>
+      ) : null}
+
+      <Box>
+        <Button disabled={!file} variant="contained">
+          Continuar
+        </Button>
+      </Box>
+    </Stack>
+  )
+}
