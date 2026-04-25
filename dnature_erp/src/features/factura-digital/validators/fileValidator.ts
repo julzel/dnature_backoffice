@@ -1,13 +1,14 @@
+import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from '../constants/fileConstants'
+
 export interface ValidationResult {
   isValid: boolean
   errors: string[]
 }
 
-export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf']
-export const MAX_FILE_SIZE = 10 * 1024 * 1024
+export const ALLOWED_TYPES = ALLOWED_FILE_TYPES
 
 export function validateFileType(file: File): boolean {
-  return ALLOWED_TYPES.includes(file.type)
+  return ALLOWED_FILE_TYPES.includes(file.type)
 }
 
 export function validateFileSize(file: File, maxSize: number = MAX_FILE_SIZE): boolean {

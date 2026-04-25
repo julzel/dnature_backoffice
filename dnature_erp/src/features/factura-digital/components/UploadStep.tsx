@@ -1,7 +1,9 @@
 import { Alert, Box, Button, Stack, Typography } from '@mui/material'
+import { validateFile } from '../validators/fileValidator'
 import { useFileUpload } from '../hooks/useFileUpload'
 import FilePreview from './FilePreview'
 import FileUploadArea from './FileUploadArea'
+import ValidationStatus from './ValidationStatus'
 
 interface UploadStepProps {
   initialFile?: File | null
@@ -14,14 +16,20 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
   const handleFileDrop = (nextFile: File | null) => {
     handleDrop(nextFile)
     if (nextFile) {
-      onFileReady(nextFile)
+      const validation = validateFile(nextFile)
+      onFileReady(validation.isValid ? nextFile : null)
+      return
     }
+
+    onFileReady(null)
   }
 
   const handleDelete = () => {
     handleRemove()
     onFileReady(null)
   }
+
+  const validation = file ? validateFile(file) : error ? { isValid: false, errors: [error] } : null
 
   return (
     <Stack spacing={3}>
@@ -34,7 +42,9 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
         </Typography>
       </Box>
 
-      <FileUploadArea error={error} onFileSelected={handleFileDrop} />
+      <FileUploadArea error={null} onFileSelected={handleFileDrop} />
+
+      <ValidationStatus validation={validation} />
 
       {file ? (
         <Stack spacing={2}>
@@ -44,7 +54,7 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
       ) : null}
 
       <Box>
-        <Button disabled={!file} variant="contained">
+        <Button disabled={!validation?.isValid || !file} variant="contained">
           Continuar
         </Button>
       </Box>
