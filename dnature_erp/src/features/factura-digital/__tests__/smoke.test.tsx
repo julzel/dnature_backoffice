@@ -32,7 +32,10 @@ describe('FacturaDigitalWizard', () => {
 
     render(<FacturaDigitalWizard />)
 
-    await user.click(screen.getByRole('button', { name: 'Marcar paso como completo' }))
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement
+    const file = new File(['jpg-binary'], 'factura.jpg', { type: 'image/jpeg' })
+
+    await user.upload(input, file)
     await user.click(screen.getByRole('button', { name: 'Siguiente' }))
 
     expect(screen.getByText('Paso 2: Confirmar Procesamiento')).toBeInTheDocument()
