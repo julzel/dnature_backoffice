@@ -15,6 +15,7 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined'
 import { ProcessingStatus } from './ProcessingStatus'
 
+// comentario para subir pull request
 interface ConfirmationDialogProps {
   open: boolean
   file: File
