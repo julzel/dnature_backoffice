@@ -6,7 +6,15 @@ Este módulo utiliza **Gemini 2.0 Flash** para extraer datos estructurados de im
 
 ---
 
-## 1. Obtener una API key gratuita
+## 1. Requisito previo: cuenta de Google
+
+Google AI Studio no tiene registro propio: usa tu cuenta de Google existente (Gmail, Google Workspace, etc.).
+
+Si aún no tienes una, créala en [https://accounts.google.com/signup](https://accounts.google.com/signup) antes de continuar.
+
+---
+
+## 2. Obtener una API key gratuita
 
 1. Ve a [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey).
 2. Inicia sesión con tu cuenta de Google.
@@ -18,7 +26,7 @@ Este módulo utiliza **Gemini 2.0 Flash** para extraer datos estructurados de im
 
 ---
 
-## 2. Configurar la variable de entorno
+## 3. Configurar la variable de entorno
 
 En la raíz del proyecto (`dnature_erp/`), crea un archivo `.env.local`:
 
@@ -36,7 +44,7 @@ npm run dev
 
 ---
 
-## 3. Dependencia instalada
+## 4. Dependencia instalada
 
 El SDK oficial ya está instalado en este proyecto:
 
@@ -48,7 +56,7 @@ No es necesario reinstalarlo. Aparece en `package.json` bajo `dependencies`.
 
 ---
 
-## 4. Archivos del servicio
+## 5. Archivos del servicio
 
 | Archivo | Propósito |
 |---|---|
@@ -95,7 +103,7 @@ interface ExtractedField<T> {
 
 ---
 
-## 5. Formatos soportados
+## 6. Formatos soportados
 
 | Formato | MIME type | Soportado |
 |---|---|---|
@@ -107,7 +115,7 @@ Tamaño máximo: **5 MB** (límite definido en `fileConstants.ts`, consistente c
 
 ---
 
-## 6. Consideraciones de seguridad
+## 7. Consideraciones de seguridad
 
 ### Para el prototipo (entorno local / staging privado)
 Una variable `VITE_GEMINI_API_KEY` en `.env.local` es suficiente. Vite la embebe en el bundle solo en tiempo de compilación.
@@ -123,7 +131,7 @@ El frontend envía el archivo al endpoint propio, y el backend llama a Gemini co
 
 ---
 
-## 7. Ajustar el prompt
+## 8. Ajustar el prompt
 
 El prompt de extracción está en `services/invoicePrompt.ts`. Puedes modificarlo para:
 
@@ -135,7 +143,7 @@ Después de cambiar el prompt, prueba con facturas reales para verificar que la 
 
 ---
 
-## 8. Verificación rápida
+## 9. Verificación rápida
 
 Para confirmar que la configuración funciona antes de integrarlo al wizard, puedes probar en la consola del navegador (con el servidor de desarrollo corriendo):
 
