@@ -33,3 +33,9 @@ export interface AuditRecord {
 }
 
 export type WizardStep = 'upload' | 'confirm-ai' | 'review' | 'validation' | 'result'
+
+export interface DuplicateCheckResult {
+  isDuplicate: boolean
+  existingInvoice?: InvoiceData & { registeredAt: string; registeredBy: string }
+  error?: string
+}

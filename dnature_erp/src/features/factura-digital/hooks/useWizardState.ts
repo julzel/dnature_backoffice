@@ -6,6 +6,7 @@ export interface WizardState {
   file: File | null
   extractedData: AIExtractionResult | null
   confirmedData: InvoiceData | null
+  validationPassed: boolean
   registrationResult: 'success' | 'error' | null
 }
 
@@ -24,6 +25,7 @@ const initialState: WizardState = {
   file: null,
   extractedData: null,
   confirmedData: null,
+  validationPassed: false,
   registrationResult: null,
 }
 
@@ -51,7 +53,7 @@ function isStepComplete(state: WizardState, step: number) {
     case 2:
       return Boolean(state.confirmedData)
     case 3:
-      return state.registrationResult !== null
+      return state.validationPassed
     default:
       return false
   }

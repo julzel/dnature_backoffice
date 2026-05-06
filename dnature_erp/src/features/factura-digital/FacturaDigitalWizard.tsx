@@ -1,5 +1,6 @@
 import { Alert, Box, Button, Container, Paper, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import UploadStep from './components/UploadStep'
+import { ValidationStep } from './components/ValidationStep'
 import { useWizardState } from './hooks/useWizardState'
 
 const steps = [
@@ -57,17 +58,26 @@ export default function FacturaDigitalWizard() {
             ) : null}
             {activeStep === 1 ? <PlaceholderStep title="Paso 2: Confirmar Procesamiento" /> : null}
             {activeStep === 2 ? <PlaceholderStep title="Paso 3: Revisar Datos" /> : null}
-            {activeStep === 3 ? <PlaceholderStep title="Paso 4: Validacion" /> : null}
+            {activeStep === 3 && wizardData.confirmedData ? (
+              <ValidationStep
+                confirmedData={wizardData.confirmedData}
+                onNext={goNext}
+                onBack={goBack}
+                onValidationPassed={() => setStepData({ validationPassed: true })}
+              />
+            ) : null}
             {activeStep === 4 ? <PlaceholderStep title="Paso 5: Resultado" /> : null}
 
-            <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', mt: 4 }}>
-              <Button disabled={!canGoBack} onClick={goBack} variant="text">
-                Atras
-              </Button>
-              <Button disabled={!canGoNext} onClick={goNext} variant="contained">
-                Siguiente
-              </Button>
-            </Stack>
+            {activeStep !== 3 && (
+              <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', mt: 4 }}>
+                <Button disabled={!canGoBack} onClick={goBack} variant="text">
+                  Atras
+                </Button>
+                <Button disabled={!canGoNext} onClick={goNext} variant="contained">
+                  Siguiente
+                </Button>
+              </Stack>
+            )}
           </Paper>
         </Stack>
       </Box>
