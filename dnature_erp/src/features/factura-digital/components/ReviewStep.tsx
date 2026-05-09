@@ -1,4 +1,4 @@
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import { Alert, Box, Paper, Stack, Typography } from '@mui/material'
 import { useInvoiceForm } from '../hooks/useInvoiceForm'
 import type { AIExtractionResult, InvoiceData } from '../types/invoice'
