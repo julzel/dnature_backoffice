@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { extractInvoiceData } from '../services/aiService'
+import { extractInvoiceData } from '../services/aiExtractionService'
 import type { AIExtractionResult } from '../types/invoice'
 
 interface UseAIProcessingReturn {
