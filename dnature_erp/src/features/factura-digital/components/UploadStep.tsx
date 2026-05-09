@@ -16,14 +16,20 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
   const handleFileDrop = (nextFile: File | null) => {
     handleDrop(nextFile)
     if (nextFile) {
-      onFileReady(nextFile)
+      const validation = validateFile(nextFile)
+      onFileReady(validation.isValid ? nextFile : null)
+      return
     }
+
+    onFileReady(null)
   }
 
   const handleDelete = () => {
     handleRemove()
     onFileReady(null)
   }
+
+  const validation = file ? validateFile(file) : error ? { isValid: false, errors: [error] } : null
 
   return (
     <Stack spacing={3}>
@@ -36,7 +42,9 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
         </Typography>
       </Box>
 
-      <FileUploadArea error={error} onFileSelected={handleFileDrop} />
+      <FileUploadArea error={null} onFileSelected={handleFileDrop} />
+
+      <ValidationStatus validation={validation} />
 
       {file ? (
         <Stack spacing={2}>

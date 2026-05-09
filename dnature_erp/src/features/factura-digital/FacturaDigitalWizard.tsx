@@ -168,6 +168,10 @@ export default function FacturaDigitalWizard() {
               </Stack>
             )}
           </Paper>
+
+          <Alert severity="info">
+            Estado actual: paso {wizardData.activeStep + 1} de {steps.length}.
+          </Alert>
         </Stack>
       </Box>
     </Container>

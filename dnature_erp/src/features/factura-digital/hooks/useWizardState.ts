@@ -15,6 +15,7 @@ type WizardPayload = Partial<Omit<WizardState, 'activeStep'>>
 type WizardAction =
   | { type: 'NEXT' }
   | { type: 'BACK' }
+  | { type: 'GO_TO'; payload: number }
   | { type: 'SET_DATA'; payload: WizardPayload }
   | { type: 'NEXT_WITH_DATA'; payload: WizardPayload }
   | { type: 'RESET' }
@@ -30,12 +31,26 @@ const initialState: WizardState = {
   registrationResult: null,
 }
 
+function clampStep(step: number) {
+  if (step < 0) {
+    return 0
+  }
+
+  if (step > LAST_STEP_INDEX) {
+    return LAST_STEP_INDEX
+  }
+
+  return step
+}
+
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
     case 'NEXT':
-      return { ...state, activeStep: Math.min(state.activeStep + 1, LAST_STEP_INDEX) }
+      return { ...state, activeStep: clampStep(state.activeStep + 1) }
     case 'BACK':
-      return { ...state, activeStep: Math.max(state.activeStep - 1, 0) }
+      return { ...state, activeStep: clampStep(state.activeStep - 1) }
+    case 'GO_TO':
+      return { ...state, activeStep: clampStep(action.payload) }
     case 'SET_DATA':
       return { ...state, ...action.payload }
     case 'NEXT_WITH_DATA':
@@ -68,6 +83,34 @@ export function useWizardState() {
   const activeStep = wizardData.activeStep
   const canGoBack = activeStep > 0
   const canGoNext = activeStep < LAST_STEP_INDEX && isStepComplete(wizardData, activeStep)
+
+  const goNext = () => {
+    if (!canGoNext) {
+      return
+    }
+
+    dispatch({ type: 'NEXT' })
+  }
+
+  const goBack = () => {
+    if (!canGoBack) {
+      return
+    }
+
+    dispatch({ type: 'BACK' })
+  }
+
+  const goToStep = (step: number) => {
+    dispatch({ type: 'GO_TO', payload: step })
+  }
+
+  const setStepData = (payload: WizardPayload) => {
+    dispatch({ type: 'SET_DATA', payload })
+  }
+
+  const reset = () => {
+    dispatch({ type: 'RESET' })
+  }
 
   return {
     activeStep,
