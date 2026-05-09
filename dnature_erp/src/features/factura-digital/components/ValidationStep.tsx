@@ -11,6 +11,8 @@ interface ValidationStepProps {
   onNext: () => void
   onBack: () => void
   onValidationPassed?: () => void
+  isRegistering?: boolean
+  registrationError?: string | null
 }
 
 type ValidationState = 'idle' | 'checking' | 'duplicate-found' | 'no-duplicate' | 'error'
@@ -19,11 +21,10 @@ type ValidationState = 'idle' | 'checking' | 'duplicate-found' | 'no-duplicate' 
  * Paso 4 del wizard - Validación de duplicados y consistencia
  * Verifica si existe una factura duplicada antes de permitir el registro
  */
-export function ValidationStep({ confirmedData, onNext, onBack, onValidationPassed }: ValidationStepProps) {
+export function ValidationStep({ confirmedData, onNext, onBack, onValidationPassed, isRegistering = false, registrationError = null }: ValidationStepProps) {
   const { isChecking, result, error, checkDuplicate, reset } = useDuplicateCheck()
   const [validationState, setValidationState] = useState<ValidationState>('idle')
   const [showDialog, setShowDialog] = useState(false)
-  const [isRegistering, setIsRegistering] = useState(false)
 
   /**
    * Inicia la verificación de duplicados al montar el componente
@@ -64,18 +65,10 @@ export function ValidationStep({ confirmedData, onNext, onBack, onValidationPass
   /**
    * Maneja la decisión del usuario cuando encuentra duplicado
    */
-  const handleContinueDespiteDuplicate = useCallback(async () => {
-    setIsRegistering(true)
-    try {
-      // Esperar un poco antes de continuar para simular procesamiento
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      setShowDialog(false)
-      onValidationPassed?.()
-      onNext()
-    } finally {
-      setIsRegistering(false)
-    }
-  }, [onNext, onValidationPassed])
+  const handleContinueDespiteDuplicate = useCallback(() => {
+    setShowDialog(false)
+    onValidationPassed?.()
+  }, [onValidationPassed])
 
   /**
    * Maneja la cancelación cuando encuentra duplicado
@@ -117,28 +110,42 @@ export function ValidationStep({ confirmedData, onNext, onBack, onValidationPass
           </Box>
         )}
 
-        {/* Estado: Sin duplicado - Avanzar automáticamente */}
+        {/* Estado: Sin duplicado - Registrar */}
         {validationState === 'no-duplicate' && (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, py: 4 }}>
-            <CheckCircleOutlinedIcon sx={{ fontSize: 48, color: 'success.main' }} />
-            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-              Validación completada
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-              No se encontraron duplicados. La factura se registrará automáticamente.
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  onValidationPassed?.()
-                  onNext()
-                }}
-                sx={{ textTransform: 'none' }}
-              >
-                Continuar al registro
-              </Button>
-            </Box>
+            {isRegistering ? (
+              <>
+                <CircularProgress />
+                <Typography variant="body2" color="text.secondary">
+                  Guardando factura...
+                </Typography>
+              </>
+            ) : (
+              <>
+                <CheckCircleOutlinedIcon sx={{ fontSize: 48, color: 'success.main' }} />
+                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  Validación completada
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                  No se encontraron duplicados. Haz clic en Registrar para guardar la factura.
+                </Typography>
+              </>
+            )}
+            {registrationError && (
+              <Alert severity="error" sx={{ width: '100%' }}>
+                {registrationError}
+              </Alert>
+            )}
+            {!isRegistering && (
+              <Box sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => onValidationPassed?.()}
+                >
+                  Registrar factura
+                </Button>
+              </Box>
+            )}
           </Box>
         )}
 

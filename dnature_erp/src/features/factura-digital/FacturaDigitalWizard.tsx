@@ -1,9 +1,12 @@
-import { Box, Button, Container, Paper, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, Container, Divider, List, ListItem, ListItemText, Paper, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import { useCallback, useState } from 'react'
 import { ConfirmAIStep } from './components/ConfirmAIStep'
 import { ReviewStep } from './components/ReviewStep'
 import UploadStep from './components/UploadStep'
 import { ValidationStep } from './components/ValidationStep'
 import { useWizardState } from './hooks/useWizardState'
+import { registerInvoice } from './services/invoiceService'
 
 const steps = [
   'Cargar Factura',
@@ -16,6 +19,28 @@ const steps = [
 export default function FacturaDigitalWizard() {
   const { activeStep, canGoNext, goBack, goNext, advance, setStepData, reset, wizardData } =
     useWizardState()
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [registrationError, setRegistrationError] = useState<string | null>(null)
+  const [rowId, setRowId] = useState<string | null>(null)
+
+  const handleValidationPassed = useCallback(async () => {
+    if (!wizardData.confirmedData) return
+    setIsRegistering(true)
+    setRegistrationError(null)
+    try {
+      const result = await registerInvoice(wizardData.confirmedData)
+      if (result.success) {
+        setRowId(result.rowId ?? null)
+        advance({ validationPassed: true })
+      } else {
+        setRegistrationError(result.error ?? 'No se pudo registrar la factura.')
+      }
+    } catch (err) {
+      setRegistrationError(err instanceof Error ? err.message : 'Error inesperado.')
+    } finally {
+      setIsRegistering(false)
+    }
+  }, [wizardData.confirmedData, advance])
 
   return (
     <Container maxWidth="lg">
@@ -74,21 +99,58 @@ export default function FacturaDigitalWizard() {
                 confirmedData={wizardData.confirmedData}
                 onNext={() => {}}
                 onBack={goBack}
-                onValidationPassed={() => advance({ validationPassed: true })}
+                onValidationPassed={handleValidationPassed}
+                isRegistering={isRegistering}
+                registrationError={registrationError}
               />
             )}
 
             {/* Step 4 — Result */}
-            {activeStep === 4 && (
+            {activeStep === 4 && wizardData.confirmedData && (
               <Stack spacing={3}>
-                <Box>
-                  <Typography sx={{ fontWeight: 700 }} variant="h5">
-                    Factura registrada
-                  </Typography>
-                  <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
-                    El registro contable quedará disponible en una próxima versión.
-                  </Typography>
-                </Box>
+                <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                  <CheckCircleOutlineIcon color="success" sx={{ fontSize: 36 }} />
+                  <Box>
+                    <Typography sx={{ fontWeight: 700 }} variant="h5">
+                      Factura registrada exitosamente
+                    </Typography>
+                    {rowId && (
+                      <Typography variant="body2" color="text.secondary">
+                        ID de registro: <strong>{rowId}</strong>
+                      </Typography>
+                    )}
+                  </Box>
+                </Stack>
+
+                <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                      Resumen de la factura
+                    </Typography>
+                    <List dense disablePadding>
+                      <ListItem disableGutters>
+                        <ListItemText primary="Proveedor" secondary={wizardData.confirmedData.provider} />
+                      </ListItem>
+                      <Divider component="li" />
+                      <ListItem disableGutters>
+                        <ListItemText primary="Número de factura" secondary={wizardData.confirmedData.invoiceNumber} />
+                      </ListItem>
+                      <Divider component="li" />
+                      <ListItem disableGutters>
+                        <ListItemText primary="Fecha" secondary={wizardData.confirmedData.date} />
+                      </ListItem>
+                      <Divider component="li" />
+                      <ListItem disableGutters>
+                        <ListItemText
+                          primary="Total"
+                          secondary={`${wizardData.confirmedData.currency} ${wizardData.confirmedData.total.toFixed(2)}`}
+                          secondaryTypographyProps={{ fontWeight: 700, color: 'text.primary' }}
+                        />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+
                 <Box>
                   <Button onClick={reset} variant="contained">
                     Registrar otra factura

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { checkDuplicate, InvoiceValidationError } from '../services/invoiceService'
+import { checkDuplicate } from '../services/invoiceService'
 import type { DuplicateCheckResult } from '../types/invoice'
 
 interface UseDuplicateCheckReturn {
@@ -33,11 +33,7 @@ export function useDuplicateCheck(): UseDuplicateCheckReturn {
       }
     } catch (err) {
       const errorMessage =
-        err instanceof InvoiceValidationError
-          ? err.message
-          : err instanceof Error
-            ? err.message
-            : 'Error desconocido al verificar duplicados.'
+        err instanceof Error ? err.message : 'Error desconocido al verificar duplicados.'
 
       setError(errorMessage)
       setResult({
