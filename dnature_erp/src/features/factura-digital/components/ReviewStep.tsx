@@ -9,9 +9,10 @@ interface ReviewStepProps {
   file: File
   extractionResult: AIExtractionResult
   onConfirm: (data: InvoiceData) => void
+  onBack: () => void
 }
 
-export function ReviewStep({ file, extractionResult, onConfirm }: ReviewStepProps) {
+export function ReviewStep({ file, extractionResult, onConfirm, onBack }: ReviewStepProps) {
   const { confidenceLevels, errors, handleChange, isValid, validate, values } =
     useInvoiceForm(extractionResult)
 
@@ -55,6 +56,7 @@ export function ReviewStep({ file, extractionResult, onConfirm }: ReviewStepProp
             isValid={isValid}
             onChange={handleChange}
             onConfirm={handleConfirm}
+            onBack={onBack}
             originalData={extractionResult}
             values={values}
           />

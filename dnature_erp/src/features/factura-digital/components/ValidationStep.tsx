@@ -171,9 +171,9 @@ export function ValidationStep({ confirmedData, onNext, onBack, onValidationPass
           <Box
             sx={{
               p: 2,
-              backgroundColor: '#f9f9f9',
+              bgcolor: 'background.default',
               borderRadius: 1,
-              borderLeft: '4px solid #1976d2',
+              borderLeft: (theme) => `4px solid ${theme.palette.primary.main}`,
             }}
           >
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>

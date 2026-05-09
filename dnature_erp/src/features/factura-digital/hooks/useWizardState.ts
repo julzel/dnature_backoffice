@@ -16,6 +16,7 @@ type WizardAction =
   | { type: 'NEXT' }
   | { type: 'BACK' }
   | { type: 'SET_DATA'; payload: WizardPayload }
+  | { type: 'NEXT_WITH_DATA'; payload: WizardPayload }
   | { type: 'RESET' }
 
 const LAST_STEP_INDEX = 4
@@ -37,6 +38,8 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, activeStep: Math.max(state.activeStep - 1, 0) }
     case 'SET_DATA':
       return { ...state, ...action.payload }
+    case 'NEXT_WITH_DATA':
+      return { ...state, ...action.payload, activeStep: Math.min(state.activeStep + 1, LAST_STEP_INDEX) }
     case 'RESET':
       return initialState
     default:
@@ -80,6 +83,7 @@ export function useWizardState() {
         dispatch({ type: 'NEXT' })
       }
     },
+    advance: (payload: WizardPayload) => dispatch({ type: 'NEXT_WITH_DATA', payload }),
     reset: () => dispatch({ type: 'RESET' }),
     setStepData: (payload: WizardPayload) => dispatch({ type: 'SET_DATA', payload }),
     wizardData,

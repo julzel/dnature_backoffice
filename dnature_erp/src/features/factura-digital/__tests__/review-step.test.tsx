@@ -17,7 +17,7 @@ const file = new File(['demo file'], 'factura-demo.pdf', { type: 'application/pd
 
 describe('ReviewStep', () => {
   it('renders all extracted fields and document preview', () => {
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} onBack={vi.fn()} />)
 
     expect(screen.getByRole('textbox', { name: 'Proveedor' })).toHaveValue('Proveedor Demo SAC')
     expect(screen.getByRole('textbox', { name: 'Numero de factura' })).toHaveValue('F001-987')
@@ -31,7 +31,7 @@ describe('ReviewStep', () => {
   })
 
   it('marks low-confidence fields and shows the proper chip labels', () => {
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} onBack={vi.fn()} />)
 
     expect(screen.getByText('Confianza baja 78%')).toBeInTheDocument()
     expect(screen.getByText('Confianza baja 74%')).toBeInTheDocument()
@@ -44,7 +44,7 @@ describe('ReviewStep', () => {
   it('updates field values when edited', async () => {
     const user = userEvent.setup()
 
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} onBack={vi.fn()} />)
 
     const providerInput = screen.getByRole('textbox', { name: 'Proveedor' })
     await user.clear(providerInput)
@@ -56,7 +56,7 @@ describe('ReviewStep', () => {
   it('shows required-field errors and keeps confirm disabled when a field is empty', async () => {
     const user = userEvent.setup()
 
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} onBack={vi.fn()} />)
 
     const providerInput = screen.getByRole('textbox', { name: 'Proveedor' })
     await user.clear(providerInput)
@@ -68,7 +68,7 @@ describe('ReviewStep', () => {
   it('shows total consistency error when total does not match subtotal plus tax', async () => {
     const user = userEvent.setup()
 
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={vi.fn()} onBack={vi.fn()} />)
 
     const totalInput = screen.getByRole('spinbutton', { name: 'Total' })
     await user.clear(totalInput)
@@ -82,7 +82,7 @@ describe('ReviewStep', () => {
     const user = userEvent.setup()
     const onConfirm = vi.fn()
 
-    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={onConfirm} />)
+    render(<ReviewStep extractionResult={extractionResult} file={file} onConfirm={onConfirm} onBack={vi.fn()} />)
 
     await user.click(screen.getByRole('button', { name: 'Confirmar datos' }))
 

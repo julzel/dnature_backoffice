@@ -22,6 +22,7 @@ interface InvoiceFormProps {
   isValid: boolean
   onChange: (field: keyof InvoiceData, value: string | number) => void
   onConfirm: () => void
+  onBack?: () => void
 }
 
 type FieldConfig = {
@@ -41,6 +42,12 @@ const fieldGroups: FieldConfig[] = [
   { field: 'total', label: 'Total', type: 'number', currency: true },
 ]
 
+function getCurrencySymbol(currency: string): string {
+  if (currency === 'USD') return '$'
+  if (currency === 'EUR') return '€'
+  return 'S/'
+}
+
 function getOriginalValue(field: keyof InvoiceData, originalData: AIExtractionResult) {
   const extractedField = originalData[field]
   return extractedField ? String(extractedField.value) : ''
@@ -58,7 +65,9 @@ export function InvoiceForm({
   isValid,
   onChange,
   onConfirm,
+  onBack,
 }: InvoiceFormProps) {
+  const currencySymbol = getCurrencySymbol(String(values.currency))
   return (
     <Stack spacing={3}>
       <Box>
@@ -147,7 +156,9 @@ export function InvoiceForm({
                       },
                       input: config.currency
                         ? {
-                            startAdornment: <InputAdornment position="start">S/</InputAdornment>,
+                            startAdornment: (
+                              <InputAdornment position="start">{currencySymbol}</InputAdornment>
+                            ),
                           }
                         : undefined,
                     }}
@@ -161,7 +172,14 @@ export function InvoiceForm({
         })}
       </Box>
 
-      <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        {onBack ? (
+          <Button onClick={onBack} variant="text">
+            Atrás
+          </Button>
+        ) : (
+          <Box />
+        )}
         <Button disabled={!isValid} onClick={onConfirm} variant="contained">
           Confirmar datos
         </Button>

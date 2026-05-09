@@ -1,7 +1,9 @@
-import { Alert, Box, Button, Stack, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 import { useFileUpload } from '../hooks/useFileUpload'
+import { validateFile } from '../validators/fileValidator'
 import FilePreview from './FilePreview'
 import FileUploadArea from './FileUploadArea'
+import ValidationStatus from './ValidationStatus'
 
 interface UploadStepProps {
   initialFile?: File | null
@@ -39,15 +41,15 @@ export default function UploadStep({ initialFile = null, onFileReady }: UploadSt
       {file ? (
         <Stack spacing={2}>
           <FilePreview file={file} onRemove={handleDelete} preview={preview} />
-          <Alert severity="success">Archivo listo para continuar al siguiente paso.</Alert>
+          <ValidationStatus result={validateFile(file)} />
         </Stack>
       ) : null}
 
-      <Box>
-        <Button disabled={!file} variant="contained">
-          Continuar
-        </Button>
-      </Box>
+      {!file && (
+        <Alert severity="info">
+          Carga un archivo para habilitar el botón Siguiente.
+        </Alert>
+      )}
     </Stack>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined'
@@ -9,21 +9,16 @@ interface DocumentPreviewProps {
 }
 
 export function DocumentPreview({ file }: DocumentPreviewProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const previewUrl = useMemo(
+    () => (file.type.startsWith('image/') ? URL.createObjectURL(file) : null),
+    [file],
+  )
 
   useEffect(() => {
-    if (!file.type.startsWith('image/')) {
-      setPreviewUrl(null)
-      return
-    }
-
-    const objectUrl = URL.createObjectURL(file)
-    setPreviewUrl(objectUrl)
-
     return () => {
-      URL.revokeObjectURL(objectUrl)
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
     }
-  }, [file])
+  }, [previewUrl])
 
   const icon =
     file.type === 'application/pdf' ? (
