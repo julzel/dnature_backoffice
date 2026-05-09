@@ -135,7 +135,7 @@ export default function HomePage() {
               <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
                 <Stack spacing={2}>
                   <Box sx={{ pb: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="start">
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                       <Box>
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
                           Revisar facturas pendientes
@@ -144,10 +144,10 @@ export default function HomePage() {
                           23 comprobantes esperando validación
                         </Typography>
                       </Box>
-                    </Stack>
+                    </Box>
                   </Box>
                   <Box>
-                    <Stack direction="row" justifyContent="space-between" alignItems="start">
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                       <Box>
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
                           Verificar reportes del mes
@@ -156,7 +156,7 @@ export default function HomePage() {
                           Reporte de abril está listo para descargar
                         </Typography>
                       </Box>
-                    </Stack>
+                    </Box>
                   </Box>
                 </Stack>
               </Paper>
