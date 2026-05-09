@@ -2,9 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import AuthProvider from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
+import DashboardLayout from './layouts/DashboardLayout'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import Facturacion from './pages/Facturacion'
+import InventoryPage from './pages/InventoryPage'
+import SuppliersPage from './pages/SuppliersPage'
 
 function App() {
   return (
@@ -16,7 +19,9 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <HomePage />
+                <DashboardLayout>
+                  <HomePage />
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
@@ -24,7 +29,29 @@ function App() {
             path="/facturacion"
             element={
               <ProtectedRoute>
-                <Facturacion />
+                <DashboardLayout>
+                  <Facturacion />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventario"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <InventoryPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proveedores"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <SuppliersPage />
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
