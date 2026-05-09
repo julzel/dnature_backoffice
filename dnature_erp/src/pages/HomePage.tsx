@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@mui/material'
 import { Brightness4 as DarkIcon, Brightness7 as LightIcon, Logout as LogoutIcon } from '@mui/icons-material'
-import Grid2 from '@mui/material/Grid2'
 import { useAuth } from '../auth/AuthProvider'
 import { useColorMode } from '../theme/ThemeProvider'
 
@@ -109,58 +108,67 @@ export default function HomePage() {
                 <Typography variant="h5" sx={{ mb: 2, fontWeight: 700 }} component="h2">
                   Métricas del mes
                 </Typography>
-                <Grid2 container spacing={3}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      sm: 'repeat(2, 1fr)',
+                      lg: 'repeat(4, 1fr)',
+                    },
+                    gap: 3,
+                  }}
+                >
                   {metrics.map((metric, index) => (
-                    <Grid2 key={metric.label} size={{ xs: 12, sm: 6, lg: 3 }}>
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          p: 3,
-                          borderRadius: 2,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          bgcolor: hoveredCard === index ? 'background.paper' : undefined,
-                          transform: hoveredCard === index ? 'translateY(-2px)' : undefined,
-                          boxShadow: hoveredCard === index ? 2 : undefined,
-                          '&:hover': {
-                            bgcolor: 'background.paper',
-                            boxShadow: 2,
-                          },
-                        }}
-                        onMouseEnter={() => setHoveredCard(index)}
-                        onMouseLeave={() => setHoveredCard(null)}
-                      >
-                        <Stack spacing={1.5}>
-                          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
-                            {metric.label}
-                          </Typography>
+                    <Paper
+                      key={metric.label}
+                      variant="outlined"
+                      sx={{
+                        p: 3,
+                        borderRadius: 2,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        bgcolor: hoveredCard === index ? 'background.paper' : undefined,
+                        transform: hoveredCard === index ? 'translateY(-2px)' : undefined,
+                        boxShadow: hoveredCard === index ? 2 : undefined,
+                        '&:hover': {
+                          bgcolor: 'background.paper',
+                          boxShadow: 2,
+                        },
+                      }}
+                      onMouseEnter={() => setHoveredCard(index)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      <Stack spacing={1.5}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                          {metric.label}
+                        </Typography>
 
-                          <Typography variant="h4" sx={{ fontWeight: 800, color: 'primary.main' }}>
-                            {metric.value}
-                          </Typography>
+                        <Typography variant="h4" sx={{ fontWeight: 800, color: 'primary.main' }}>
+                          {metric.value}
+                        </Typography>
 
-                          {metric.change && (
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color:
-                                  metric.changeType === 'positive'
-                                    ? 'success.main'
-                                    : metric.changeType === 'negative'
-                                      ? 'error.main'
-                                      : 'text.secondary',
-                                fontWeight: 600,
-                              }}
-                            >
-                              {metric.changeType === 'positive' ? '↑ ' : metric.changeType === 'negative' ? '↓ ' : ''}
-                              {metric.change}
-                            </Typography>
-                          )}
-                        </Stack>
-                      </Paper>
-                    </Grid2>
+                        {metric.change && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color:
+                                metric.changeType === 'positive'
+                                  ? 'success.main'
+                                  : metric.changeType === 'negative'
+                                    ? 'error.main'
+                                    : 'text.secondary',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {metric.changeType === 'positive' ? '↑ ' : metric.changeType === 'negative' ? '↓ ' : ''}
+                            {metric.change}
+                          </Typography>
+                        )}
+                      </Stack>
+                    </Paper>
                   ))}
-                </Grid2>
+                </Box>
               </Box>
 
               {/* Quick Actions Section */}
